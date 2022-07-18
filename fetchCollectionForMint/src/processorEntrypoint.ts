@@ -93,7 +93,7 @@ const run = async (file) => {
     await csvWriter.writeRecords(itemArray);
     console.log('\n');
     console.log('Done!' + ' ' + file);
-    console.log('Execution time: ' + ((Date.now() - start)/1000));
+    console.log('Execution time: ' + ((Date.now() - start)/1000) + 's');
     console.log('\n');
 };
 
