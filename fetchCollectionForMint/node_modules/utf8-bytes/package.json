@@ -1,0 +1,32 @@
+{
+  "name": "utf8-bytes",
+  "version": "0.0.1",
+  "description": "return an array of bytes from a unicode string",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "tape": "~1.0.4"
+  },
+  "scripts": {
+    "test": "tape test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/substack/utf8-bytes.git"
+  },
+  "homepage": "https://github.com/substack/utf8-bytes",
+  "keywords": [
+    "utf8",
+    "utf-8",
+    "unicode",
+    "bytes",
+    "string",
+    "encoding"
+  ],
+  "author": {
+    "name": "James Halliday",
+    "email": "mail@substack.net",
+    "url": "http://substack.net"
+  },
+  "license": "MIT"
+}

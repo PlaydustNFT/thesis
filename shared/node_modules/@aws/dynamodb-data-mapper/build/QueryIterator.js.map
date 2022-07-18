@@ -1,0 +1,1 @@
+{"version":3,"file":"QueryIterator.js","sourceRoot":"","sources":["../src/QueryIterator.ts"],"names":[],"mappings":";;;AAAA,uCAAsC;AAEtC,mDAAkD;AAQlD;;;GAGG;AACH;IAAsC,yCAA8B;IAChE,uBACI,MAAgB,EAChB,gBAA6C,EAC7C,YAC8D,EAC9D,OAAmD;eAEnD,kBACI,IAAI,+BAAc,CAAC,MAAM,EAAE,gBAAgB,EAAE,YAAY,EAAE,OAAO,CAAC,CACtE;IACL,CAAC;IACL,oBAAC;AAAD,CAAC,AAZD,CAAsC,mBAAQ,GAY7C;AAZY,sCAAa"}

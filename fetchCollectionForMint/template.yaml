@@ -1,0 +1,89 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform:
+  - AWS::Serverless-2016-10-31
+  - Name: DatadogServerless
+    Parameters:
+      stackName: !Ref "AWS::StackName"
+      apiKey: 434486c28a50b9acd7830bbc129ca5eb
+      nodeLayerVersion: 78
+      extensionLayerVersion: 22
+      site: datadoghq.com
+      env: !Ref Env # Optional
+      service: metadata-aggregation-to-OS
+Description: >
+  metadata-aggregation-to-OS
+
+  NFT metadata are aggregated and inserted into OS
+  
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 300
+    ReservedConcurrentExecutions: 15
+    Runtime: nodejs14.x
+
+Parameters:
+  Env: 
+    Type: String
+    AllowedValues:
+      - testing
+      - prod
+    Description: Environment in which the app will be deployed
+
+Mappings:
+  EnvMapping:
+    testing:
+      DynamoDbEndpoint: ''
+      DynamoDBARN: 'arn:aws:dynamodb:us-east-1:446170235391:table/playdust-parrotfish-entitydb/stream/2022-06-06T22:53:11.390'
+      EntityTableName: playdust-parrotfish-entitydb
+      FunctionName: metadata-aggregation-to-OS-testing
+      OpenSearchIndex: 'nft-metadata2'
+      OpenSearchUrl: 'https://search-playdust-opensearch-prod-vmssooj4mprhjypibucncf6ysm.us-east-1.es.amazonaws.com/_bulk'
+      OpenSearchUserName: 'playdust'
+      OpenSearchPassword: 'fdj.rya9ady.VYJ_mrg'
+    prod:
+      DynamoDbEndpoint: '' 
+      DynamoDBARN: 'arn:aws:dynamodb:us-east-1:513523160844:table/playdust-parrotfish-prod-entitydb/stream/2022-06-07T18:55:10.458'
+      EntityTableName: playdust-parrotfish-prod-entitydb
+      FunctionName: metadata-aggregation-to-OS-prod
+      OpenSearchIndex: 'nft-metadata2'
+      OpenSearchUrl: 'https://search-playdust-opensearch-prod-vmssooj4mprhjypibucncf6ysm.us-east-1.es.amazonaws.com/_bulk'
+      OpenSearchUserName: 'playdust'
+      OpenSearchPassword: 'fdj.rya9ady.VYJ_mrg'
+
+Resources:
+  NFTMetadatatoOS:
+    Type: AWS::SQS::Queue
+    Properties:
+      VisibilityTimeout: 301
+      QueueName: NFTMetadata-to-OS
+  MetadataAggregationToOS:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties: 
+      FunctionName: !FindInMap [ EnvMapping, !Ref Env, FunctionName ]
+      CodeUri: ./build
+      Handler: lambdaEntrypoint.handler
+      MemorySize: 1024
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          DYNAMODB_ENDPOINT: !FindInMap [ EnvMapping, !Ref Env, DynamoDbEndpoint ]
+          ENTITY_TABLE_NAME: !FindInMap [ EnvMapping, !Ref Env, EntityTableName ]
+          OPEN_SEARCH_INDEX: !FindInMap [ EnvMapping, !Ref Env, OpenSearchIndex ]
+          OPEN_SEARCH_URL: !FindInMap [ EnvMapping, !Ref Env, OpenSearchUrl ]
+          OPEN_SEARCH_USERNAME: !FindInMap [ EnvMapping, !Ref Env, OpenSearchUserName ]
+          OPEN_SEARCH_PASSWORD: !FindInMap [ EnvMapping, !Ref Env, OpenSearchPassword ]
+          QUEUE_URL: !Ref NFTMetadatatoOS
+      Policies:
+        - AmazonDynamoDBFullAccess
+        - AmazonOpenSearchServiceFullAccess
+        - SQSPollerPolicy:
+            QueueName: !GetAtt NFTMetadatatoOS.QueueName
+      Events:
+        SQSEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt NFTMetadatatoOS.Arn
+            BatchSize: 500
+            MaximumBatchingWindowInSeconds: 1
