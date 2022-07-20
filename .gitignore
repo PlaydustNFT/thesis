@@ -1,4 +1,6 @@
 **/src/files
 **/src/bigFiles
+**/src/oldFiles
 **/node_modeules
 **/config.json
+**/txColl.csv

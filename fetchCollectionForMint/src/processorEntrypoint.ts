@@ -31,14 +31,13 @@ const run = async (file) => {
     //At this stage everything can fit into an array in memory -> probably it will need to be split if the dataset grows
     let itemArray = [];
     let promises = [];
-
-    const fd = fs.createReadStream('./files/' + file)
+    console.log(file);
+    const fd = fs.createReadStream(file)
     .pipe(csv());
     for await( const data of fd){
         //console.log(data);
         itemArray.push(data);
     }
-    console.log(itemArray.length);
     
     for(const item of itemArray){
         const collectionIds = [];
@@ -98,22 +97,23 @@ const run = async (file) => {
 };
 
 const main = async () => {
-    const directoryPath = path.join(__dirname, './files');
-    const promises = [];
+    const directoryPath = path.join(__dirname, './bigFiles');
     //passsing directoryPath and callback function
-    fs.readdir(directoryPath, async function (err, files) {
-        //handling error
-        if (err) {
-            return console.log('Unable to scan directory: ' + err);
-        } 
-        //listing all files using forEach
-        for(let file of files){
-            console.log('Starting..' + ' ' + file);
-            promises.push(run(file));
-        };
-    });
+    const dir = fs.readdirSync(directoryPath);
+    for await (const file of dir){
+        console.log('Starting..' + ' ' + file);
+        let promises = [];
 
-    await Promise.all(promises);
+        const dir2 = fs.readdirSync('./bigFiles/' + file + '/');
+        for (const file2 of dir2){
+            promises.push(run('./bigFiles/' + file + '/' + file2));
+        }
+        
+    
+        await Promise.all(promises);
+    }
+    
+    
 }
 
 main();
