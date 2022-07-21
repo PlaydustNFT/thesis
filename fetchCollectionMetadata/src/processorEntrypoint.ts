@@ -39,6 +39,10 @@ const run = async (file: string) => {
 
     
     for(const coll of itemArray){
+        let item = {
+            Collection: coll.Collection
+        }
+
         let entity: CollectionMetaDataEntity = new CollectionMetaDataEntity();
         entity.globalId = EntityType.CollectionMetaData + '-' + coll.Collection;
         //console.log(entity);
@@ -46,17 +50,13 @@ const run = async (file: string) => {
         .then(collItem => {
             //console.log(collItem.data.name);
             //console.log(collItem.data.symbol);
-            let item = {
-                Collection: coll.Collection,
-                Name: collItem.data.name,
-                Symbol: collItem.data.symbol
-            }
-            resultArray.push(item);
+            item['Name'] = collItem.data.name;
+            item['Symbol'] = collItem.data.symbol;
         })
         .catch(err => {
             //console.log('Failed to fetch collection data!: ' + coll);
         });
-
+        resultArray.push(item);
     }
 
     
