@@ -40,8 +40,10 @@ for index, row in df2.iterrows():
     counter = counter + 1
     print(counter)
     print(row['Name'] + ' data gathered!')
-    if counter % 100 == 0:
-        time.sleep(60)
+    time.sleep(60)
+
+    #if counter % 50 == 0:
+    #   time.sleep(60)
 
 
 for index, row in df.iterrows():
