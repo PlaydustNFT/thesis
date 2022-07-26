@@ -1,3 +1,4 @@
+from pyparsing import replaceWith
 from pytrends.request import TrendReq
 import pandas as pd
 import numpy
@@ -6,7 +7,7 @@ import time
 
 df2 = pd.read_csv('collMetadata.csv')
 
-df = pd.read_csv('txColl.csv')
+df = pd.read_csv('reducedTxColl.csv')
 
 df = df[df['Collection'].notna()]
 #print(df.isna().sum())
@@ -30,26 +31,29 @@ pytrends = TrendReq(hl='en-US', tz=0, retries=2, backoff_factor=5)
 map = {}
 counter = 0
 for index, row in df2.iterrows():
-    if pd.isnull(row['Name']):
+    if pd.isnull(row['Name']) or row['Name'] == '':
+        counter = counter + 1
         continue
     else:
         kw_list = [row['Name']] #More than 1 word => value is scaled to compare the different kw (only 1 term will reach 100)
         pytrends.build_payload(kw_list, cat=0, timeframe='today 12-m', geo='', gprop='')
 
         map[row['Name']] = pytrends.interest_over_time()   
+        print(map[row['Name']])
     counter = counter + 1
     print(counter)
-    print(row['Name'] + ' data gathered!')
     time.sleep(60)
 
     #if counter % 50 == 0:
     #   time.sleep(60)
 
 
+
 for index, row in df.iterrows():
     #print(row['Timestamp'])
-    if pd.isnull(row['Name']):
+    if pd.isnull(row['Name']) or row['Name'] == '' or map[row['Name']].empty :
         row['CollectionTrend'] = 0
+        print('zerooo')
     else:
         collData = map[row['Name']]
         #print(collData)
@@ -61,11 +65,13 @@ for index, row in df.iterrows():
             else:
                 break
 
+
 #print(df.head(50))
 df = df.drop('Name', axis=1)
 df = df.drop('Symbol', axis=1)
+print(df.head(50))
 
-df.to_csv('test.csv')
+df.to_csv('reducTxCollTrend.csv')
 
 
 

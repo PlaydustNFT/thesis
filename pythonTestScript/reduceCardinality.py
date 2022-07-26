@@ -38,12 +38,6 @@ def cumulatively_categorise(column,threshold=0.85,return_categories_list=True):
   else:
     return new_column
 
-def create_attribute_columns(column):
-    for i in column:
-        print(i)
-        print(i[2])
-        break
-
 
 
 
