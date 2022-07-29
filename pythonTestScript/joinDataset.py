@@ -46,28 +46,28 @@ def create_attribute_columns(column):
 # df = pd.read_csv('pocket_godz.csv')
 # df = df.drop('Unnamed: 0.1' ,axis =1)
 # df = df.drop('Unnamed: 0' ,axis =1)
-df = pd.read_csv('part_05')
+df = pd.read_csv('part_00Result.csv')
+df1 = pd.read_csv('part_01Result.csv')
+df2 = pd.read_csv('part_02Result.csv')
+df3 = pd.read_csv('part_03Result.csv')
+df4 = pd.read_csv('part_04Result.csv')
+df5 = pd.read_csv('part_05Result.csv')
 
 
-#print(df.head(20))
 
 
-newColumns = create_attribute_columns(df['Attributes'])
+print(df)
+print(df1)
 
-for row in range(0, len(newColumns)):
-    #print (attributes)
-    #row = 0
-    counter = 1
-    for value in newColumns[row]:
-        df.loc[row, 'Trait'+ str(counter)] = value
-        #df['Trait'+ str(counter)] = value
-        counter = counter + 1
+df = df.append(df1, ignore_index=True)
+df = df.append(df2, ignore_index=True)
+df = df.append(df3, ignore_index=True)
+df = df.append(df4, ignore_index=True)
+df = df.append(df5, ignore_index=True)
 
-    if row%10000 == 0:
-        print (row)
-    #row = row + 1
-    #break
 
-df.to_csv('part_05Result.csv')
-print(df.head(50))
-print(df.tail(50))
+
+
+df = df.drop('Unnamed: 0.1' ,axis =1)
+df = df.drop('Unnamed: 0' ,axis =1)
+print(df)

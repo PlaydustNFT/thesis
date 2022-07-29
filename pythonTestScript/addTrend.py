@@ -6,15 +6,16 @@ import math
 import time
 
 df2 = pd.read_csv('collMetadata.csv')
-
 df = pd.read_csv('reducedTxColl.csv')
+df = df.drop('Unnamed: 0', axis=1)
+trends = pd.read_csv('trendsNegative.csv')
 
 df = df[df['Collection'].notna()]
 #print(df.isna().sum())
 
 df = pd.merge(df, df2, how='inner', on = 'Collection')
 print(df.head(20))
-print(df2.head(20))
+print(trends)
 
 
 #print(df) 
@@ -28,73 +29,47 @@ print('Median: ' + str(df['Collection'].value_counts().median()))
 print('\n')
 
 
-pytrends = TrendReq(hl='en-US', tz=0, retries=2, backoff_factor=5)
-map = {}
+
+
 counter = 0
-kw_list = ['Pocket Godz'] #More than 1 word => value is scaled to compare the different kw (only 1 term will reach 100)
-pytrends.build_payload(kw_list, cat=0, timeframe='today 12-m', geo='', gprop='')
-trends = pytrends.interest_over_time()
-print(trends)
-print(trends.columns)
-print(trends.index)
-trends = trends.drop('isPartial', axis=1)
-
-for index, row in df2.iterrows():
-    if pd.isnull(row['Name']) or row['Name'] == '':
-        counter = counter + 1
-        continue
-    else:
-        kw_list = [row['Name']] #More than 1 word => value is scaled to compare the different kw (only 1 term will reach 100)
-        pytrends.build_payload(kw_list, cat=0, timeframe='today 12-m', geo='', gprop='')
-
-        #map[row['Name']] = pytrends.interest_over_time()   
-        result = pytrends.interest_over_time()
-        print(result)
-        if not(result.empty):
-            trends[row['Name']] = result[row['Name']]
-        else:
-            trends[row['Name']] = -1
-
-        print(row['Name'])
-        trends.to_csv('trendsNegative.csv')
-    
-    
-    counter = counter + 1
-    print(counter)
-    time.sleep(1)
-
-    #if counter % 50 == 0:
-    #   time.sleep(60)
-    
-print(trends.columns)
-
-'''
 for index, row in df.iterrows():
     #print(row['Timestamp'])
-    if pd.isnull(row['Name']) or row['Name'] == '' or map[row['Name']].empty :
-        row['CollectionTrend'] = 0
-        print('zerooo')
+    # print(index)
+    # print(row)
+    if pd.isnull(row['Name']) or row['Name'] == '' or row['Name'] not in trends.columns:
+        row['CollectionTrend'] = -1
+        #print('zerooo')
     else:
-        collData = map[row['Name']]
-        #print(collData)
-        for row2 in collData.itertuples():
+        for index2, row2 in trends.iterrows():
+            # print('\n')
+            # print(index2)
+            # print('\n')
+            # print(row2)
+            # print('\n')
+            # print(row2['date'])
+            
             #print(row2.Index)
             #print((pd.to_datetime(row2.Index) - pd.Timestamp("1970-01-01")) // pd.Timedelta('1s'))
-            if row['Timestamp'] >= (pd.to_datetime(row2.Index) - pd.Timestamp("1970-01-01")) // pd.Timedelta('1s'):
-                df.at[index, 'CollectionTrend'] = row2[1]
+            if row['Timestamp'] >= (pd.to_datetime(row2['date']) - pd.Timestamp("1970-01-01")) // pd.Timedelta('1s'):
+                df.at[index, 'CollectionTrend'] = row2[row['Name']]
             else:
                 break
+            
+    counter = counter + 1
+    if counter % 1000 == 0:
+        print(counter)
 
 
 #print(df.head(50))
 df = df.drop('Name', axis=1)
 df = df.drop('Symbol', axis=1)
-print(df.head(50))
+
+print(df.head(20))
 
 df.to_csv('reducTxCollTrend.csv')
 
 
-'''
+
 
 
 

@@ -1,0 +1,27 @@
+Threshold
+75% -> 974 Collections
+80% -> 1200 Collections
+** 85% -> 1509 Collections **
+90% -> 1982 Collections
+95% -> 2855 Collections
+
+
+** 85% ** 
+Mean: 4058.481776010603
+Median: 2145.0
+Min: 831
+
+90%
+Mean: 3089.9339051463166
+Median: 1532.5
+Min: 511
+
+95%
+Mean: 2145.0959719789844
+Median: 907.0
+Min: 237
+
+98%
+Mean: 1497.3713936430318
+Median: 477.0
+Min: 86
