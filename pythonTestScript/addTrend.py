@@ -8,7 +8,7 @@ import time
 df2 = pd.read_csv('collMetadata.csv')
 df = pd.read_csv('reducedTxColl.csv')
 df = df.drop('Unnamed: 0', axis=1)
-trends = pd.read_csv('trendsNegative.csv')
+trends = pd.read_csv('./file/trendsNegative.csv')
 
 df = df[df['Collection'].notna()]
 #print(df.isna().sum())
