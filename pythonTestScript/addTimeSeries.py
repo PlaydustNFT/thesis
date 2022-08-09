@@ -7,11 +7,11 @@ import math
 import time
 pd.set_option('display.float_format', lambda x: '%.0f' % x)
 
-df = pd.read_csv('./file/reducTxCollTrend.csv')
+df2 = pd.read_csv('./file/reducTxCollTrend.csv')
 
-df = df.sort_values(['Collection', 'Timestamp'],
+df3 = df2.sort_values(['Collection', 'Timestamp'],
               ascending = [True, True])
-df = df.reset_index(drop=True)
+df = df3.reset_index(drop=True)
 
 counter = 0
 j = df.columns.get_loc('Price')
